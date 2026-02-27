@@ -27,12 +27,26 @@ const F0_CONFIG = {
     defaultId: "BC_seg20"
   },
   nus48e_singing: {
-    audioIds: [],
-    defaultId: null
+    audioIds: [
+      "ADIZ_sing_01_seg3", "SAMF_sing_18_seg7",
+      "JLEE_sing_08_seg5", "PMAR_sing_11_seg7",
+      "JTAN_sing_07_seg1", "NJAT_sing_16_seg4",
+      "KENN_sing_17_seg5", "MCUR_sing_12_seg3",
+      "MPOL_sing_19_seg5", "VKOW_sing_20_seg7",
+      "MPUR_sing_03_seg5", "ZHIY_sing_06_seg7"
+    ],
+    defaultId: "ADIZ_sing_01_seg3"
   },
   nus48e_speech: {
-    audioIds: [],
-    defaultId: null
+    audioIds: [
+      "ADIZ_read_01_seg3", "SAMF_read_18_seg7",
+      "JLEE_read_08_seg5", "PMAR_read_11_seg7",
+      "JTAN_read_07_seg1", "NJAT_read_16_seg4",
+      "KENN_read_17_seg5", "MCUR_read_12_seg3",
+      "MPOL_read_19_seg5", "VKOW_read_20_seg7",
+      "MPUR_read_03_seg5", "ZHIY_read_06_seg7"
+    ],
+    defaultId: "ADIZ_read_01_seg3"
   }
 };
 
