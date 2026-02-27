@@ -192,6 +192,80 @@ function noise_updateAudio() {
 }
 
 // =====================================================================
+// 会場モード (Web Audio API によるゲインブースト)
+// =====================================================================
+var venueCtx = null;       // AudioContext
+var venueGain = null;      // GainNode
+var venueCompressor = null; // DynamicsCompressorNode
+var venueActive = false;
+var venueSources = new Map(); // audio element → MediaElementSource
+
+// 通常ゲイン: 1.0 (0 dB)、会場ゲイン: 4.0 (+12 dB)
+var VENUE_GAIN_NORMAL = 1.0;
+var VENUE_GAIN_BOOST  = 4.0;
+
+function venueInit() {
+  if (venueCtx) return; // 既に初期化済み
+  venueCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+  // ゲインノード
+  venueGain = venueCtx.createGain();
+  venueGain.gain.value = VENUE_GAIN_NORMAL;
+
+  // コンプレッサー (クリッピング防止)
+  venueCompressor = venueCtx.createDynamicsCompressor();
+  venueCompressor.threshold.setValueAtTime(-3, venueCtx.currentTime);
+  venueCompressor.knee.setValueAtTime(12, venueCtx.currentTime);
+  venueCompressor.ratio.setValueAtTime(8, venueCtx.currentTime);
+  venueCompressor.attack.setValueAtTime(0.003, venueCtx.currentTime);
+  venueCompressor.release.setValueAtTime(0.15, venueCtx.currentTime);
+
+  // チェーン: source → gain → compressor → destination
+  venueGain.connect(venueCompressor);
+  venueCompressor.connect(venueCtx.destination);
+
+  // 全 audio 要素を接続
+  var audios = document.querySelectorAll("audio");
+  audios.forEach(function (el) {
+    venueConnectAudio(el);
+  });
+}
+
+function venueConnectAudio(audioEl) {
+  if (!venueCtx || venueSources.has(audioEl)) return;
+  var src = venueCtx.createMediaElementSource(audioEl);
+  src.connect(venueGain);
+  venueSources.set(audioEl, src);
+}
+
+function venueToggle() {
+  // AudioContext は最初のユーザージェスチャーで初期化
+  venueInit();
+
+  // suspended 状態なら resume
+  if (venueCtx.state === "suspended") {
+    venueCtx.resume();
+  }
+
+  venueActive = !venueActive;
+  venueGain.gain.setTargetAtTime(
+    venueActive ? VENUE_GAIN_BOOST : VENUE_GAIN_NORMAL,
+    venueCtx.currentTime,
+    0.05
+  );
+
+  // UI 更新
+  var btn = $("venueModeBtn");
+  if (venueActive) {
+    btn.classList.add("active");
+    btn.querySelector(".venue-label").textContent = "会場モード ON";
+  } else {
+    btn.classList.remove("active");
+    btn.querySelector(".venue-label").textContent = "会場モード";
+  }
+}
+
+// =====================================================================
 // 初期化
 // =====================================================================
 window.addEventListener("DOMContentLoaded", function () {
@@ -207,4 +281,7 @@ window.addEventListener("DOMContentLoaded", function () {
   // --- 5.3 雑音耐性 ---
   $("noiseChangeBtn").addEventListener("click", noise_updateAudio);
   noise_init();
+
+  // --- 会場モード ---
+  $("venueModeBtn").addEventListener("click", venueToggle);
 });

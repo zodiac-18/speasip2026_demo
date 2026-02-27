@@ -125,6 +125,52 @@ body { font-family: var(--font-body); background: var(--color-bg); color: var(--
 .ref-list li::marker { font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: var(--color-text-muted); }
 .ref-list a { color: var(--color-accent); text-decoration: none; word-break: break-all; }
 
+/* ===== Venue Mode Toggle ===== */
+.venue-mode-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  border: 2px solid var(--color-border);
+  border-radius: 40px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.10);
+  transition: all 0.25s ease;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.venue-mode-btn:hover {
+  border-color: var(--color-accent);
+  box-shadow: 0 4px 24px rgba(37,99,235,0.15);
+}
+.venue-mode-btn.active {
+  background: #ef4444;
+  color: #fff;
+  border-color: #ef4444;
+  box-shadow: 0 4px 24px rgba(239,68,68,0.30);
+  animation: venue-pulse 2s infinite;
+}
+.venue-mode-btn.active:hover {
+  background: #dc2626;
+  border-color: #dc2626;
+}
+.venue-icon { font-size: 18px; line-height: 1; }
+.venue-label { white-space: nowrap; }
+
+@keyframes venue-pulse {
+  0%, 100% { box-shadow: 0 4px 24px rgba(239,68,68,0.30); }
+  50% { box-shadow: 0 4px 32px rgba(239,68,68,0.50); }
+}
+
 /* ===== Footer ===== */
 .site-footer { text-align: center; padding: 20px; font-size: 12px; color: var(--color-text-muted); border-top: 1px solid var(--color-border); background: var(--color-surface); font-family: var(--font-mono); }
 
