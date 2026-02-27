@@ -186,6 +186,12 @@
         <div class="select-section">
           <label for="dsAudioIdSelect">音声を選択：</label>
           <select id="dsAudioIdSelect"></select>
+          <label for="dsF0Select" style="margin-left:4px;">$F_0$ 倍率：</label>
+          <select id="dsF0Select">
+            <option value="0.50" selected>&times;0.5</option>
+            <option value="1.00">&times;1.0</option>
+            <option value="2.00">&times;2.0</option>
+          </select>
           <button id="dsChangeBtn">変更</button>
         </div>
         <table class="audio-table">
@@ -205,12 +211,17 @@
         </div>
       </div>
 
-      <!-- 5.3 雑音耐性 -->
+      <!-- 5.3 雑音抑制 -->
       <div class="subsection">
-        <h3 class="subsection-heading">5.3 雑音耐性デモ</h3>
+        <h3 class="subsection-heading">5.3 雑音抑制デモ</h3>
         <div class="select-section">
           <label for="noiseAudioIdSelect">音声を選択：</label>
           <select id="noiseAudioIdSelect"></select>
+          <label for="noiseDomainSelect" style="margin-left:4px;">ドメイン：</label>
+          <select id="noiseDomainSelect">
+            <option value="in_domain" selected>In-domain</option>
+            <option value="out_domain">Out-of-domain</option>
+          </select>
           <label for="noiseSNRSelect" style="margin-left:4px;">SN比：</label>
           <select id="noiseSNRSelect">
             <option value="clean">Clean</option>
