@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SPEASIP Demo Preview v4</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+  <style>
+:root{--bg:#fafaf8;--surface:#fff;--text:#1a1a1a;--text2:#555;--muted:#888;--accent:#2563eb;--accent-l:#eff4ff;--border:#e2e2e0;--border-l:#f0f0ee;--font:'Noto Sans JP',sans-serif;--mono:'IBM Plex Mono',monospace;--mw:880px;--r:8px;--s:0 1px 3px rgba(0,0,0,.06);--sm:0 4px 16px rgba(0,0,0,.06)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{font-size:16px;scroll-behavior:smooth;-webkit-font-smoothing:antialiased}body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.8}
+.site-header{background:var(--text);color:#fff;padding:28px 24px;text-align:center}.header-inner{max-width:var(--mw);margin:0 auto}.header-label{display:inline-block;font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:10px;font-family:var(--mono)}.site-header h1{font-size:18px;font-weight:500;line-height:1.5}
+.container{max-width:var(--mw);margin:0 auto;padding:0 24px 60px}
+.paper-info{text-align:center;padding:48px 0 40px;border-bottom:1px solid var(--border)}.paper-title{font-size:24px;font-weight:700;line-height:1.6;margin-bottom:8px}.paper-subtitle{font-size:13px;color:var(--muted);font-family:var(--mono);margin-bottom:20px}.paper-authors{font-size:16px;font-weight:500}.paper-affiliation{font-size:14px;color:var(--text2)}
+.section{padding-top:48px}.section-heading{display:flex;align-items:center;gap:12px;font-size:20px;font-weight:700;margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid var(--text)}.heading-number{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;background:var(--text);color:#fff;font-size:14px;font-weight:700;border-radius:50%;flex-shrink:0;font-family:var(--mono)}
+.subsection{margin-top:36px}.subsection-heading{font-size:17px;font-weight:700;margin-bottom:14px;padding-left:14px;border-left:3px solid var(--accent);line-height:1.4}
+.figure-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:24px;box-shadow:var(--s);transition:box-shadow .2s}.figure-card:hover{box-shadow:var(--sm)}.figure-card figcaption{padding:12px 18px;font-size:13px;line-height:1.7;color:var(--text2);border-top:1px solid var(--border-l);background:var(--bg)}.fig-label{font-weight:700;color:var(--accent);margin-right:6px;font-family:var(--mono);font-size:12px}
+.img-placeholder{width:100%;padding:50px 20px;background:linear-gradient(135deg,#f8fafc,#e2e8f0);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--muted);font-family:var(--mono);text-align:center;line-height:1.6}
+.figure-group{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:24px;box-shadow:var(--s)}.figure-group-inner{display:grid;grid-template-columns:1fr 1fr;gap:0}.figure-group-inner .sub-figure{overflow:hidden}.figure-group-inner .sub-figure:first-child{border-right:1px solid var(--border-l)}.figure-group-labels{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid var(--border-l)}.figure-group-labels .sub-label{padding:8px 14px;font-size:12px;text-align:center;color:var(--text2);font-family:var(--mono)}.figure-group-labels .sub-label:first-child{border-right:1px solid var(--border-l)}.figure-group>figcaption{padding:12px 18px;font-size:13px;line-height:1.7;color:var(--text2);border-top:1px solid var(--border-l);background:var(--bg)}
+.bullet-list{list-style:none;margin-bottom:24px}.bullet-list li{position:relative;padding-left:20px;font-size:14px;line-height:1.8;color:var(--text2);margin-bottom:6px}.bullet-list li::before{content:"";position:absolute;left:4px;top:11px;width:6px;height:6px;background:var(--accent);border-radius:50%}.bullet-list li strong{color:var(--text);font-weight:500}.bullet-list li.finding-positive::before{background:#16a34a}.bullet-list li.finding-negative::before{background:#dc2626}
+.stats-row{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap}.stat-item{flex:1;min-width:120px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;text-align:center}.stat-value{font-size:20px;font-weight:700;color:var(--accent);font-family:var(--mono);line-height:1.3}.stat-label{font-size:11px;color:var(--muted);margin-top:2px}
+.metrics-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:24px}.metric-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;transition:border-color .2s,box-shadow .2s}.metric-card:hover{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}.metric-name{font-size:15px;font-weight:500;color:var(--accent);margin-bottom:2px}.metric-desc{font-size:12px;font-weight:700;color:var(--text)}.metric-equation{margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);text-align:center;overflow-x:auto;-webkit-overflow-scrolling:touch}.metric-equation .katex-display{margin:4px 0 0}
+.demo-info{margin-bottom:24px}.model-list{display:flex;flex-direction:column;gap:8px}.model-item{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--text2);line-height:1.6}.model-tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;font-family:var(--mono);white-space:nowrap;flex-shrink:0;margin-top:2px}.model-tag.baseline{background:#f1f5f9;color:#64748b;border:1px solid #cbd5e1}.model-tag.proposed{background:var(--accent-l);color:var(--accent);border:1px solid #bfdbfe}.model-tag.ablation{background:#fffbeb;color:#d97706;border:1px solid #fde68a}
+.select-section{display:flex;align-items:center;gap:10px;margin-bottom:20px}.select-section label{font-size:14px;font-weight:500;white-space:nowrap}.select-section select{font-family:var(--mono);font-size:13px;padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--surface)}.select-section button{font-size:13px;font-weight:500;padding:8px 20px;background:var(--text);color:#fff;border:none;border-radius:6px;cursor:pointer}
+.audio-table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;background:var(--surface)}.audio-table thead th{background:var(--bg);font-size:13px;font-weight:700;padding:12px 10px;text-align:center;border-bottom:2px solid var(--border)}.audio-table tbody td{padding:10px;text-align:center;vertical-align:middle;border-bottom:1px solid var(--border-l);font-size:14px}.audio-table tbody tr:last-child td{border-bottom:none}.model-cell{font-weight:700;font-size:13px!important;font-family:var(--mono);white-space:nowrap;background:var(--bg);border-right:1px solid var(--border-l)}.audio-table audio{width:100%;max-width:200px;height:36px}
+.audio-cards{display:none}.audio-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:12px}.audio-card-model{font-size:13px;font-weight:700;font-family:var(--mono);margin-bottom:10px}.audio-card-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}.audio-card-row:last-child{margin-bottom:0}.audio-card-label{font-size:12px;font-family:var(--mono);color:var(--muted);width:56px;flex-shrink:0}.audio-card-row audio{flex:1;height:36px;min-width:0}
+.ref-list{padding-left:24px;font-size:13px;line-height:1.8;color:var(--text2)}.ref-list li{margin-bottom:4px}.ref-list a{color:var(--accent);text-decoration:none}
+.site-footer{text-align:center;padding:20px;font-size:12px;color:var(--muted);border-top:1px solid var(--border);background:var(--surface);font-family:var(--mono)}
+@media(max-width:768px){.container{padding:0 16px 48px}.site-header{padding:24px 16px}.site-header h1{font-size:16px}.paper-info{padding:36px 0 32px}.paper-title{font-size:21px}.section{padding-top:40px}.section-heading{font-size:18px}.heading-number{width:28px;height:28px;font-size:13px}.stats-row{gap:8px}.stat-item{padding:12px 10px}.stat-value{font-size:18px}}
+@media(max-width:540px){.container{padding:0 12px 40px}.site-header{padding:20px 12px}.site-header h1{font-size:15px;line-height:1.6}.header-label{font-size:10px}.paper-info{padding:28px 0 24px}.paper-title{font-size:18px}.paper-authors{font-size:14px}.section{padding-top:32px}.section-heading{font-size:16px;margin-bottom:16px}.heading-number{width:26px;height:26px;font-size:12px}.subsection{margin-top:28px}.subsection-heading{font-size:15px}.figure-group-inner{grid-template-columns:1fr}.figure-group-inner .sub-figure:first-child{border-right:none;border-bottom:1px solid var(--border-l)}.figure-group-labels{grid-template-columns:1fr}.figure-group-labels .sub-label:first-child{border-right:none;border-bottom:1px solid var(--border-l)}.metrics-grid{grid-template-columns:1fr}.stats-row{flex-direction:column}.bullet-list li{font-size:13px;line-height:1.7}.select-section{flex-wrap:wrap;gap:8px}.select-section select{flex:1;min-width:160px}.audio-table{display:none}.audio-cards{display:block}.model-item{flex-direction:column;gap:4px}.figure-card figcaption,.figure-group>figcaption{padding:10px 14px;font-size:12px}.ref-list{font-size:12px;padding-left:20px}}
+  </style>
+</head>
+<body>
+  <header class="site-header"><div class="header-inner"><span class="header-label">IEICE Technical Report — SP/EA/SIP 研究会</span><h1>大規模学習条件下および雑音環境下における VAE-SiFiGAN の性能評価</h1></div></header>
+  <main class="container">
+    <section class="paper-info">
+      <h2 class="paper-title">大規模学習条件下および雑音環境下における<br>VAE-SiFiGAN の性能評価</h2>
+      <p class="paper-subtitle">Performance Evaluation of VAE-SiFiGAN under Large-Scale Training and Noisy Conditions</p>
+      <p class="paper-authors">荻田 健一，米山 怜於，ホワン ウェンチン，戸田 智基</p>
+      <p class="paper-affiliation">名古屋大学</p>
+    </section>
+
+    <section class="section">
+      <h2 class="section-heading"><span class="heading-number">1</span>VAE-SiFiGAN のアーキテクチャ</h2>
+      <figure class="figure-card"><div class="img-placeholder">📐 architecture.png</div><figcaption><span class="fig-label">図 1</span>VAE-SiFiGAN のアーキテクチャ</figcaption></figure>
+    </section>
+
+    <section class="section">
+      <h2 class="section-heading"><span class="heading-number">2</span><span>推定 $F_0$ 抽出誤差に基づくデータ選別</span></h2>
+      <figure class="figure-group">
+        <div class="figure-group-inner">
+          <div class="sub-figure"><div class="img-placeholder">🎵 半ピッチエラー</div></div>
+          <div class="sub-figure"><div class="img-placeholder">🎵 V/UV 判定誤差</div></div>
+        </div>
+        <div class="figure-group-labels">
+          <div class="sub-label">(a) 半ピッチエラー</div>
+          <div class="sub-label">(b) 有声/無声判定誤差</div>
+        </div>
+        <figcaption><span class="fig-label">図 2</span>$F_0$ 抽出誤差の例</figcaption>
+      </figure>
+      <figure class="figure-card"><div class="img-placeholder">🔄 data_selection_pipeline.png</div><figcaption><span class="fig-label">図 3</span>データ選別手法の概要</figcaption></figure>
+      <div class="metrics-grid">
+        <div class="metric-card"><h4 class="metric-name">$M_{\text{rmse}}$</h4><p class="metric-desc">二乗平均平方根誤差</p><div class="metric-equation">$$M_{\text{rmse}} = \frac{\|\boldsymbol{S} - \hat{\boldsymbol{S}}\|_F}{\sqrt{T \cdot M}}$$</div></div>
+        <div class="metric-card"><h4 class="metric-name">$M_{\text{std}}$</h4><p class="metric-desc">誤差標準偏差</p><div class="metric-equation">$$M_{\text{std}} = \sqrt{\frac{1}{T}\sum_{t}(e_t - \bar{e})^2}$$</div></div>
+        <div class="metric-card"><h4 class="metric-name">$M_{\text{ratio}}$</h4><p class="metric-desc">高誤差フレーム比率</p><div class="metric-equation">$$M_{\text{ratio}} = \frac{1}{T}\sum_{t}\mathbb{1}(e_t > \tilde{e} + k \cdot \text{MAD})$$</div></div>
+        <div class="metric-card"><h4 class="metric-name">$M_{\text{run}}$</h4><p class="metric-desc">最大高誤差連続長</p><div class="metric-equation">$$M_{\text{run}} = \max_{1 \le i \le j \le T}\{j\!-\!i\!+\!1 \mid \forall t \!\in\! \{i,...,j\},\, e_t > \tilde{e} + k \!\cdot\! \text{MAD}\}$$</div></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-heading"><span class="heading-number">3</span>データセット構成</h2>
+      <div class="stats-row">
+        <div class="stat-item"><div class="stat-value">535.28 h</div><div class="stat-label">総収録時間</div></div>
+        <div class="stat-item"><div class="stat-value">1,491</div><div class="stat-label">総話者数</div></div>
+        <div class="stat-item"><div class="stat-value">9</div><div class="stat-label">言語数</div></div>
+        <div class="stat-item"><div class="stat-value">9.1%</div><div class="stat-label">選別除外率</div></div>
+      </div>
+      <figure class="figure-card"><div class="img-placeholder">📋 dataset_table.png</div><figcaption><span class="fig-label">表 1</span>データセット構成とデータ選別のしきい値設定</figcaption></figure>
+    </section>
+
+    <section class="section">
+      <h2 class="section-heading"><span class="heading-number">4</span>実験結果</h2>
+      <div class="subsection">
+        <h3 class="subsection-heading">4.1 データ選別の効果検証</h3>
+        <figure class="figure-card"><div class="img-placeholder">📈 result_data_selection.png</div><figcaption><span class="fig-label">図 4</span>データ選別前後の性能差（正の値＝改善）</figcaption></figure>
+        <ul class="bullet-list">
+          <li><strong>w/o Prior</strong>：潜在表現中の $F_0$ と誤抽出 $F_0$ の矛盾で性能が大幅に劣化 → 選別で大きく改善</li>
+          <li><strong>VAE-SiFiGAN</strong>：$F_0$ 除去機構が矛盾をある程度緩和 → 改善幅は限定的</li>
+          <li><strong>SiFi-GAN</strong>：入力が $F_0$ 非依存のため影響小</li>
+        </ul>
+      </div>
+      <div class="subsection">
+        <h3 class="subsection-heading">4.2 大規模学習条件下での $F_0$ 制御性能</h3>
+        <figure class="figure-card"><div class="img-placeholder">📈 result_f0_control.png</div><figcaption><span class="fig-label">図 5</span>大規模学習条件下における客観的評価結果</figcaption></figure>
+        <ul class="bullet-list">
+          <li class="finding-positive">上方 $F_0$ 変換（$\times 1.25$ 以降）で <strong>V/UV 精度を大幅に改善</strong></li>
+          <li class="finding-negative">下方 $F_0$ 変換（$\times 1.0$ 未満）では RMSE・V/UV とも <strong>SiFi-GAN より悪化</strong></li>
+          <li class="finding-negative">高 $F_0$ 領域で<strong>変換後 $F_0$ が元の値に引き戻される傾向</strong>（$F_0$ 痕跡の残存）</li>
+        </ul>
+        <figure class="figure-card"><div class="img-placeholder">🎵 spectrogram_f0_restoration.png<br>赤枠: VAE-SiFiGAN / w/o Prior が元の F₀ を再現</div><figcaption><span class="fig-label">図 6</span>$F_0$ 変換音声のスペクトログラム．赤枠で (b) VAE-SiFiGAN / (c) w/o Prior が元の $F_0$ を再現してしまっている．</figcaption></figure>
+      </div>
+      <div class="subsection">
+        <h3 class="subsection-heading">4.3 雑音に対する頑健性</h3>
+        <ul class="bullet-list"><li>PESQ・STOI・DNSMOS すべてで <strong>VAE-SiFiGAN が SiFi-GAN を一貫して上回った</strong></li></ul>
+        <figure class="figure-card"><div class="img-placeholder">📈 result_noise_robustness.png</div><figcaption><span class="fig-label">図 7</span>雑音耐性の客観的評価結果（灰色＝学習領域外）</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-heading"><span class="heading-number">5</span>デモ音声</h2>
+      <div class="demo-info"><div class="model-list">
+        <div class="model-item"><span class="model-tag baseline">SiFi-GAN</span><span>ベースライン（MGC+BAP 条件付け）</span></div>
+        <div class="model-item"><span class="model-tag proposed">VAE-SiFiGAN</span><span>$F_0$ 除去機構あり（MEL→Posterior，MGC+BAP→Prior）</span></div>
+        <div class="model-item"><span class="model-tag ablation">w/o Prior</span><span>$F_0$ 除去機構なし（事前分布 $= \mathcal{N}(0,I)$）</span></div>
+      </div></div>
+      <div class="select-section"><label>音声を選択：</label><select><option>BC_seg20</option></select><button>変更</button></div>
+      <table class="audio-table">
+        <thead><tr><th>モデル</th><th>$F_0 \times 1.0$</th><th>$F_0 \times 0.5$</th><th>$F_0 \times 2.0$</th></tr></thead>
+        <tbody>
+          <tr><td class="model-cell">自然音声</td><td><audio controls></audio></td><td></td><td></td></tr>
+          <tr><td class="model-cell">SiFi-GAN</td><td><audio controls></audio></td><td><audio controls></audio></td><td><audio controls></audio></td></tr>
+          <tr><td class="model-cell">VAE-SiFiGAN</td><td><audio controls></audio></td><td><audio controls></audio></td><td><audio controls></audio></td></tr>
+          <tr><td class="model-cell">w/o Prior</td><td><audio controls></audio></td><td><audio controls></audio></td><td><audio controls></audio></td></tr>
+        </tbody>
+      </table>
+      <div class="audio-cards">
+        <div class="audio-card"><div class="audio-card-model">自然音声</div><div class="audio-card-row"><span class="audio-card-label">×1.0</span><audio controls></audio></div></div>
+        <div class="audio-card"><div class="audio-card-model">SiFi-GAN</div><div class="audio-card-row"><span class="audio-card-label">×1.0</span><audio controls></audio></div><div class="audio-card-row"><span class="audio-card-label">×0.5</span><audio controls></audio></div><div class="audio-card-row"><span class="audio-card-label">×2.0</span><audio controls></audio></div></div>
+        <div class="audio-card"><div class="audio-card-model">VAE-SiFiGAN</div><div class="audio-card-row"><span class="audio-card-label">×1.0</span><audio controls></audio></div><div class="audio-card-row"><span class="audio-card-label">×0.5</span><audio controls></audio></div><div class="audio-card-row"><span class="audio-card-label">×2.0</span><audio controls></audio></div></div>
+        <div class="audio-card"><div class="audio-card-model">w/o Prior</div><div class="audio-card-row"><span class="audio-card-label">×1.0</span><audio controls></audio></div><div class="audio-card-row"><span class="audio-card-label">×0.5</span><audio controls></audio></div><div class="audio-card-row"><span class="audio-card-label">×2.0</span><audio controls></audio></div></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-heading"><span class="heading-number">6</span>参考文献</h2>
+      <ol class="ref-list">
+        <li>J. Kong et al., "HiFi-GAN," <em>Proc. NeurIPS</em>, 2020.</li>
+        <li>R. Yoneyama et al., "Source-Filter HiFi-GAN," <em>Proc. ICASSP</em>, 2023.</li>
+        <li>M. Morise et al., "WORLD," <em>IEICE Trans.</em>, 2016.</li>
+        <li>D. P. Kingma and M. Welling, "Auto-encoding Variational Bayes," <em>Proc. ICLR</em>, 2014.</li>
+        <li>K. Ogita et al., "VAE-SiFiGAN," <em>Proc. EUSIPCO</em>, 2025.</li>
+      </ol>
+    </section>
+  </main>
+  <footer class="site-footer"><p>&copy; 2026 Kenichi Ogita — Nagoya University</p></footer>
+</body>
+</html>

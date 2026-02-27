@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>大規模学習条件下および雑音環境下におけるVAE-SiFiGANの性能評価 - デモサイト</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <span class="header-label">IEICE Technical Report — SP/EA/SIP 研究会</span>
+      <h1>大規模学習条件下および雑音環境下における VAE-SiFiGAN の性能評価</h1>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <section class="paper-info">
+      <h2 class="paper-title">大規模学習条件下および雑音環境下における<br>VAE-SiFiGAN の性能評価</h2>
+      <p class="paper-subtitle">Performance Evaluation of VAE-SiFiGAN under Large-Scale Training and Noisy Conditions</p>
+      <p class="paper-authors">荻田 健一，米山 怜於，ホワン ウェンチン，戸田 智基</p>
+      <p class="paper-affiliation">名古屋大学</p>
+    </section>
+
+    <!-- 1. アーキテクチャ -->
+    <section class="section" id="architecture">
+      <h2 class="section-heading"><span class="heading-number">1</span>VAE-SiFiGAN のアーキテクチャ</h2>
+      <figure class="figure-card">
+        <img src="./img/architecture.png" alt="VAE-SiFiGAN のアーキテクチャ" />
+        <figcaption><span class="fig-label">図 1</span>VAE-SiFiGAN のアーキテクチャ</figcaption>
+      </figure>
+    </section>
+
+    <!-- 2. データ選別 -->
+    <section class="section" id="data-selection">
+      <h2 class="section-heading"><span class="heading-number">2</span><span>推定 $F_0$ 抽出誤差に基づくデータ選別</span></h2>
+      <figure class="figure-card">
+        <img src="./img/f0_error.png" alt="F0 抽出誤差の例" />
+        <figcaption><span class="fig-label">図 2</span>$F_0$ 抽出誤差の例．(a)：半ピッチエラー (b)：有声/無声判定誤差</figcaption>
+      </figure>
+      <figure class="figure-card">
+        <img src="./img/data_selection_pipeline.png" alt="データ選別手法の概要" />
+        <figcaption><span class="fig-label">図 3</span>データ選別手法の概要</figcaption>
+      </figure>
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <h4 class="metric-name">$M_{\text{rmse}}$</h4>
+          <p class="metric-desc">二乗平均平方根誤差</p>
+          <p class="metric-note">クリップ全体を通して$F_0$抽出誤差が大きいものを検出する．</p>
+          <div class="metric-equation">$$M_{\text{rmse}} = \frac{\|\boldsymbol{S} - \hat{\boldsymbol{S}}\|_F}{\sqrt{T \cdot M}}$$</div>
+        </div>
+        <div class="metric-card">
+          <h4 class="metric-name">$M_{\text{std}}$</h4>
+          <p class="metric-desc">誤差標準偏差</p>
+          <p class="metric-note">局所的に現れる $F_0$ 抽出誤差を検出する．</p>
+          <div class="metric-equation">$$M_{\text{std}} = \sqrt{\frac{1}{T}\sum_{t}(e_t - \bar{e})^2}$$</div>
+        </div>
+        <div class="metric-card">
+          <h4 class="metric-name">$M_{\text{ratio}}$</h4>
+          <p class="metric-desc">高誤差フレーム比率</p>
+          <p class="metric-note">$F_0$ 抽出誤差が頻繁に現れるクリップを優先的に除外する．</p>
+          <div class="metric-equation">$$M_{\text{ratio}} = \frac{1}{T}\sum_{t}\mathbb{1}(e_t > \tilde{e} + k \cdot \text{MAD})$$</div>
+        </div>
+        <div class="metric-card">
+          <h4 class="metric-name">$M_{\text{run}}$</h4>
+          <p class="metric-desc">最大高誤差連続長</p>
+          <p class="metric-note">歌唱におけるロングトーンなど，$F_0$ 抽出誤差が長時間連続して現れるクリップを除外する．</p>
+          <div class="metric-equation">$$M_{\text{run}} = \max_{1 \le i \le j \le T}\{j\!-\!i\!+\!1 \mid \forall t \!\in\! \{i,...,j\},\, e_t > \tilde{e} + k \!\cdot\! \text{MAD}\}$$</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. データセット -->
+    <section class="section" id="dataset">
+      <h2 class="section-heading"><span class="heading-number">3</span>データセット構成</h2>
+      <div class="stats-row">
+        <div class="stat-item"><div class="stat-value">535.28 h</div><div class="stat-label">総収録時間</div></div>
+        <div class="stat-item"><div class="stat-value">1,491</div><div class="stat-label">総話者数</div></div>
+        <div class="stat-item"><div class="stat-value">9</div><div class="stat-label">言語数</div></div>
+        <div class="stat-item"><div class="stat-value">9.1%</div><div class="stat-label">選別除外率</div></div>
+      </div>
+      <figure class="figure-card">
+        <img src="./img/dataset_table.png" alt="データセット構成" />
+        <figcaption><span class="fig-label">表 1</span>データセット構成とデータ選別のしきい値設定</figcaption>
+      </figure>
+    </section>
+
+    <!-- 4. 実験結果 -->
+    <section class="section" id="results">
+      <h2 class="section-heading"><span class="heading-number">4</span>実験結果</h2>
+
+      <div class="subsection">
+        <h3 class="subsection-heading">4.1 データ選別の効果検証</h3>
+        <figure class="figure-card">
+          <img src="./img/result_data_selection.png" alt="データ選別前後の性能差" />
+          <figcaption><span class="fig-label">図 4</span>データ選別前後の性能差（正の値＝改善）</figcaption>
+        </figure>
+        <ul class="bullet-list">
+          <li><strong>w/o Prior</strong>：潜在表現中の $F_0$ と誤抽出 $F_0$ の矛盾で性能が大幅に劣化 → 選別で大きく改善</li>
+          <li><strong>VAE-SiFiGAN</strong>：$F_0$ 除去機構が矛盾をある程度緩和 → 改善幅は限定的</li>
+          <li><strong>SiFi-GAN</strong>：入力が $F_0$ 非依存のため影響小</li>
+        </ul>
+      </div>
+
+      <div class="subsection">
+        <h3 class="subsection-heading">4.2 大規模学習条件下での $F_0$ 制御性能</h3>
+        <figure class="figure-card">
+          <img src="./img/result_f0_control.png" alt="大規模学習条件下の評価結果" />
+          <figcaption><span class="fig-label">図 5</span>大規模学習条件下における客観的評価結果</figcaption>
+        </figure>
+        <ul class="bullet-list">
+          <li class="finding-positive">上方 $F_0$ 変換（$\times 1.25$ 以降）で <strong>V/UV 精度を大幅に改善</strong></li>
+          <li class="finding-negative">下方 $F_0$ 変換（$\times 1.0$ 未満）では RMSE・V/UV とも <strong>SiFi-GAN より悪化</strong></li>
+          <li class="finding-negative">高 $F_0$ 領域で<strong>変換後 $F_0$ が元の値に引き戻される傾向</strong>（$F_0$ 痕跡の残存）</li>
+        </ul>
+        <figure class="figure-card">
+          <img src="./img/spectrogram_f0_restoration.png" alt="F0復元傾向のスペクトログラム" />
+          <figcaption><span class="fig-label">図 6</span>$F_0$ 変換音声のスペクトログラム．赤枠で (b) VAE-SiFiGAN / (c) w/o Prior が元の $F_0$ を再現してしまっている．</figcaption>
+        </figure>
+      </div>
+
+      <div class="subsection">
+        <h3 class="subsection-heading">4.3 雑音に対する頑健性</h3>
+        <ul class="bullet-list">
+          <li>PESQ・STOI・DNSMOS すべてで <strong>VAE-SiFiGAN が SiFi-GAN を一貫して上回った</strong></li>
+        </ul>
+        <figure class="figure-card">
+          <img src="./img/result_noise_robustness.png" alt="雑音耐性の評価結果" />
+          <figcaption><span class="fig-label">図 7</span>雑音耐性の客観的評価結果（灰色＝学習領域外）</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- 5. デモ音声 -->
+    <section class="section" id="demo">
+      <h2 class="section-heading"><span class="heading-number">5</span>デモ音声</h2>
+      <div class="demo-info">
+        <div class="model-list">
+          <div class="model-item"><span class="model-tag tag-sifigan">SiFi-GAN</span><span>ベースライン（MGC+BAP 条件付け）</span></div>
+          <div class="model-item"><span class="model-tag tag-vae">VAE-SiFiGAN</span><span>$F_0$ 除去機構あり（MEL→Posterior，MGC+BAP→Prior）</span></div>
+          <div class="model-item"><span class="model-tag tag-woprior">w/o Prior</span><span>$F_0$ 除去機構なし（事前分布 $= \mathcal{N}(0,I)$）</span></div>
+        </div>
+      </div>
+
+      <!-- 5.1 F0制御 -->
+      <div class="subsection">
+        <h3 class="subsection-heading">5.1 $F_0$ 制御デモ</h3>
+        <div class="select-section">
+          <label for="f0DatasetSelect">データセット：</label>
+          <select id="f0DatasetSelect">
+            <option value="namine_ritsu">Namine Ritsu</option>
+            <option value="nus48e_singing">NUS-48E (singing)</option>
+            <option value="nus48e_speech">NUS-48E (speech)</option>
+          </select>
+          <label for="audioIdSelect">音声を選択：</label>
+          <select id="audioIdSelect"></select>
+          <button id="changeBtn">変更</button>
+        </div>
+        <table class="audio-table">
+          <thead><tr><th>モデル</th><th>$F_0 \times 1.0$</th><th>$F_0 \times 0.5$</th><th>$F_0 \times 2.0$</th></tr></thead>
+          <tbody>
+            <tr><td class="model-cell">自然音声</td><td><audio id="natural_f1.0" controls preload="none"></audio></td><td></td><td></td></tr>
+            <tr><td class="model-cell">SiFi-GAN</td><td><audio id="sifigan_f1.0" controls preload="none"></audio></td><td><audio id="sifigan_f0.5" controls preload="none"></audio></td><td><audio id="sifigan_f2.0" controls preload="none"></audio></td></tr>
+            <tr><td class="model-cell">VAE-SiFiGAN</td><td><audio id="vae_sifigan_f1.0" controls preload="none"></audio></td><td><audio id="vae_sifigan_f0.5" controls preload="none"></audio></td><td><audio id="vae_sifigan_f2.0" controls preload="none"></audio></td></tr>
+            <tr><td class="model-cell">w/o Prior</td><td><audio id="woprior_f1.0" controls preload="none"></audio></td><td><audio id="woprior_f0.5" controls preload="none"></audio></td><td><audio id="woprior_f2.0" controls preload="none"></audio></td></tr>
+          </tbody>
+        </table>
+        <div class="audio-cards">
+          <div class="audio-card"><div class="audio-card-model">自然音声</div><div class="audio-card-row"><span class="audio-card-label">×1.0</span><audio id="m_natural_f1.0" controls preload="none"></audio></div></div>
+          <div class="audio-card"><div class="audio-card-model">SiFi-GAN</div><div class="audio-card-row"><span class="audio-card-label">×1.0</span><audio id="m_sifigan_f1.0" controls preload="none"></audio></div><div class="audio-card-row"><span class="audio-card-label">×0.5</span><audio id="m_sifigan_f0.5" controls preload="none"></audio></div><div class="audio-card-row"><span class="audio-card-label">×2.0</span><audio id="m_sifigan_f2.0" controls preload="none"></audio></div></div>
+          <div class="audio-card"><div class="audio-card-model">VAE-SiFiGAN</div><div class="audio-card-row"><span class="audio-card-label">×1.0</span><audio id="m_vae_sifigan_f1.0" controls preload="none"></audio></div><div class="audio-card-row"><span class="audio-card-label">×0.5</span><audio id="m_vae_sifigan_f0.5" controls preload="none"></audio></div><div class="audio-card-row"><span class="audio-card-label">×2.0</span><audio id="m_vae_sifigan_f2.0" controls preload="none"></audio></div></div>
+          <div class="audio-card"><div class="audio-card-model">w/o Prior</div><div class="audio-card-row"><span class="audio-card-label">×1.0</span><audio id="m_woprior_f1.0" controls preload="none"></audio></div><div class="audio-card-row"><span class="audio-card-label">×0.5</span><audio id="m_woprior_f0.5" controls preload="none"></audio></div><div class="audio-card-row"><span class="audio-card-label">×2.0</span><audio id="m_woprior_f2.0" controls preload="none"></audio></div></div>
+        </div>
+      </div>
+
+      <!-- 5.2 データ選別前後 -->
+      <div class="subsection">
+        <h3 class="subsection-heading">5.2 データ選別前後の比較</h3>
+        <div class="select-section">
+          <label for="dsAudioIdSelect">音声を選択：</label>
+          <select id="dsAudioIdSelect"></select>
+          <button id="dsChangeBtn">変更</button>
+        </div>
+        <table class="audio-table">
+          <thead><tr><th>モデル</th><th>選別前</th><th>選別後</th></tr></thead>
+          <tbody>
+            <tr><td class="model-cell">自然音声</td><td colspan="2"><audio id="ds_natural" controls preload="none"></audio></td></tr>
+            <tr><td class="model-cell">SiFi-GAN</td><td><audio id="ds_sifigan_before" controls preload="none"></audio></td><td><audio id="ds_sifigan_after" controls preload="none"></audio></td></tr>
+            <tr><td class="model-cell">VAE-SiFiGAN</td><td><audio id="ds_vae_before" controls preload="none"></audio></td><td><audio id="ds_vae_after" controls preload="none"></audio></td></tr>
+            <tr><td class="model-cell">w/o Prior</td><td><audio id="ds_woprior_before" controls preload="none"></audio></td><td><audio id="ds_woprior_after" controls preload="none"></audio></td></tr>
+          </tbody>
+        </table>
+        <div class="audio-cards">
+          <div class="audio-card"><div class="audio-card-model">自然音声</div><div class="audio-card-row"><span class="audio-card-label">—</span><audio id="m_ds_natural" controls preload="none"></audio></div></div>
+          <div class="audio-card"><div class="audio-card-model">SiFi-GAN</div><div class="audio-card-row"><span class="audio-card-label">選別前</span><audio id="m_ds_sifigan_before" controls preload="none"></audio></div><div class="audio-card-row"><span class="audio-card-label">選別後</span><audio id="m_ds_sifigan_after" controls preload="none"></audio></div></div>
+          <div class="audio-card"><div class="audio-card-model">VAE-SiFiGAN</div><div class="audio-card-row"><span class="audio-card-label">選別前</span><audio id="m_ds_vae_before" controls preload="none"></audio></div><div class="audio-card-row"><span class="audio-card-label">選別後</span><audio id="m_ds_vae_after" controls preload="none"></audio></div></div>
+          <div class="audio-card"><div class="audio-card-model">w/o Prior</div><div class="audio-card-row"><span class="audio-card-label">選別前</span><audio id="m_ds_woprior_before" controls preload="none"></audio></div><div class="audio-card-row"><span class="audio-card-label">選別後</span><audio id="m_ds_woprior_after" controls preload="none"></audio></div></div>
+        </div>
+      </div>
+
+      <!-- 5.3 雑音耐性 -->
+      <div class="subsection">
+        <h3 class="subsection-heading">5.3 雑音耐性デモ</h3>
+        <div class="select-section">
+          <label for="noiseAudioIdSelect">音声を選択：</label>
+          <select id="noiseAudioIdSelect"></select>
+          <label for="noiseSNRSelect" style="margin-left:4px;">SN比：</label>
+          <select id="noiseSNRSelect">
+            <option value="clean">Clean</option>
+            <option value="30dB">30 dB</option>
+            <option value="20dB">20 dB</option>
+            <option value="10dB" selected>10 dB</option>
+            <option value="0dB">0 dB</option>
+          </select>
+          <button id="noiseChangeBtn">変更</button>
+        </div>
+        <table class="audio-table">
+          <thead><tr><th>モデル</th><th>雑音付加入力</th><th>合成音声</th></tr></thead>
+          <tbody>
+            <tr><td class="model-cell">自然音声</td><td><audio id="noise_natural_noisy" controls preload="none"></audio></td><td></td></tr>
+            <tr><td class="model-cell">SiFi-GAN</td><td></td><td><audio id="noise_sifigan" controls preload="none"></audio></td></tr>
+            <tr><td class="model-cell">VAE-SiFiGAN</td><td></td><td><audio id="noise_vae" controls preload="none"></audio></td></tr>
+          </tbody>
+        </table>
+        <div class="audio-cards">
+          <div class="audio-card"><div class="audio-card-model">自然音声（雑音付加）</div><div class="audio-card-row"><span class="audio-card-label">入力</span><audio id="m_noise_natural_noisy" controls preload="none"></audio></div></div>
+          <div class="audio-card"><div class="audio-card-model">SiFi-GAN</div><div class="audio-card-row"><span class="audio-card-label">合成</span><audio id="m_noise_sifigan" controls preload="none"></audio></div></div>
+          <div class="audio-card"><div class="audio-card-model">VAE-SiFiGAN</div><div class="audio-card-row"><span class="audio-card-label">合成</span><audio id="m_noise_vae" controls preload="none"></audio></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 参考文献 -->
+    <section class="section" id="references">
+      <h2 class="section-heading"><span class="heading-number">6</span>参考文献</h2>
+      <ol class="ref-list">
+        <li>J. Kong, J. Kim, and J. Bae, "HiFi-GAN: Generative Adversarial Networks for Efficient and High Fidelity Speech Synthesis," in <em>Proc. NeurIPS</em>, Dec. 2020, pp. 17022–17033.</li>
+        <li>R. Yoneyama, Y.-C. Wu, and T. Toda, "Source-Filter HiFiGAN: Fast and Pitch Controllable High-Fidelity Neural Vocoder," in <em>Proc. ICASSP</em>, Jul. 2023, pp. 1–5.</li>
+        <li>M. Morise, F. Yokomori, and K. Ozawa, "WORLD: A Vocoder-Based High-Quality Speech Synthesis System for Real-Time Applications," <em>IEICE Trans. Inf. Syst.</em>, vol. 99, no. 7, pp. 1877–1884, 2016.</li>
+        <li>D. P. Kingma and M. Welling, "Auto-encoding Variational Bayes," in <em>Proc. ICLR</em>, Jul. 2014, pp. 1–5.</li>
+        <li>K. Ogita, R. Yoneyama, W.-C. Huang, and T. Toda, "VAE-SiFiGAN: Source-Filter HiFi-GAN Based on Variational Autoencoder Representations with Enhanced Pitch Controllability," in <em>Proc. EUSIPCO</em>, 2025, pp. 531–535.</li>
+        <li>M. Morise, G. Miyashita, and K. Ozawa, "Low-Dimensional Representation of Spectral Envelope Without Deterioration for Full-Band Speech Analysis/Synthesis System," in <em>Proc. Interspeech</em>, 2017, pp. 409–413.</li>
+        <li>R. Yoneyama, Y.-C. Wu, and T. Toda, "High-Fidelity and Pitch-Controllable Neural Vocoder Based on Unified Source-Filter Networks," <em>IEEE/ACM TASLP</em>, vol. 31, pp. 3717–3729, 2023.</li>
+        <li>R. Yoneyama, Y.-C. Wu, and T. Toda, "Unified Source-Filter GAN with Harmonic-plus-Noise Source Excitation Generation," in <em>Proc. Interspeech</em>, 2022, pp. 848–852.</li>
+        <li>M. Morise, "Harvest: A High-Performance Fundamental Frequency Estimator from Speech Signals," in <em>Proc. Interspeech</em>, 2017, pp. 2321–2325.</li>
+        <li>Y. Koizumi, H. Zen, S. Karita, Y. Ding, K. Yatabe, N. Morioka, M. Bacchiani, Y. Zhang, W. Han, and A. Bapna, "LibriTTS-R: A Restored Multi-Speaker Text-to-Speech Corpus," in <em>Proc. Interspeech</em>, 2023, pp. 5496–5500.</li>
+        <li>Y. Zhang, C. Pan, W. Guo, <em>et al.</em>, "GTSinger: A Global Multi-Technique Singing Corpus with Realistic Music Scores for All Singing Tasks," in <em>Proc. NeurIPS</em>, vol. 37, 2024, pp. 1117–1140.</li>
+        <li>"Hi-Fi-CAPTAIN: High-fidelity and high-capacity conversational speech synthesis corpus developed by NICT," <a href="https://ast-astrec.nict.go.jp/en/release/hi-fi-captain/" target="_blank">link</a>, 2023.</li>
+        <li>S. Takamichi, K. Mitsui, Y. Saito, T. Koriyama, N. Tanji, and H. Saruwatari, "JVS corpus: free Japanese multi-speaker voice corpus," <em>arXiv preprint arXiv:1908.06248</em>, 2019.</li>
+        <li>Z. Duan, H. Fang, B. Li, K. C. Sim, and Y. Wang, "The NUS sung and spoken lyrics corpus," in <em>Proc. APSIPA ASC</em>, 2013, pp. 1–9.</li>
+        <li>R. Huang, F. Chen, Y. Ren, J. Liu, C. Cui, and Z. Zhao, "Multi-singer: Fast multi-singer singing voice vocoder with a large-scale corpus," <em>Proc. ACM-MM</em>, 2021, pp. 3945–3954.</li>
+        <li>L. Li, S. Wang, L. Deng, <em>et al.</em>, "M4Singer: A Multi-Style, Multi-Singer and Musical Score Provided Mandarin Singing Corpus," in <em>Proc. NeurIPS</em>, vol. 35, 2022, pp. 6914–6926.</li>
+        <li>Y. Wang, X. Wang, P. Zhu, <em>et al.</em>, "Opencpop: A High-Quality Open Source Chinese Popular Song Corpus for Singing Voice Synthesis," in <em>Proc. Interspeech</em>, 2022, pp. 4242–4246.</li>
+        <li>S. Choi, W. Kim, S. Park, S. Yong, and J. Nam, "CSD: Children's Song Dataset for Singing Voice Research," in <em>Proc. ISMIR</em>, 2020.</li>
+        <li>Canon, "[NamineRitsu] Blue (YOASOBI)," <a href="https://www.youtube.com/watch?v=pKeo9IE_L1I" target="_blank">YouTube</a>, Accessed: 2024.1.30.</li>
+        <li>SSS 合同会社, "東北イタコ歌唱データベース," <a href="https://zunko.jp/itadev/login.php" target="_blank">link</a>, Accessed: 2026.1.19.</li>
+        <li>I. Ogawa and M. Morise, "Tohoku Kiritan singing database," <em>J. Acoust. Soc. Jpn.</em>, vol. 42, no. 3, pp. 140–145, 2021.</li>
+        <li>アマノケイ, "夏目悠李/男性歌声データベース," <a href="https://ksdcm1ng.wixsite.com/njksofficial/enunu-nnsvs" target="_blank">link</a>, Accessed: 2026.1.19.</li>
+        <li>J. Koguchi, S. Takamichi, and M. Morise, "PJS: Phoneme-balanced japanese singing-voice corpus," in <em>Proc. APSIPA ASC</em>, 2020, pp. 487–491.</li>
+        <li>R. Sonobe, S. Takamichi, and H. Saruwatari, "Jsut corpus: free large-scale japanese speech corpus for end-to-end speech synthesis," <em>arXiv preprint arXiv:1711.00354</em>, 2017.</li>
+        <li>M. Morise, "CheapTrick, A spectral envelope estimator for high-quality speech synthesis," <em>Speech Communication</em>, vol. 67, pp. 1–7, 2015.</li>
+        <li>M. Morise, "D4C, A band-aperiodicity estimator for high-quality speech synthesis," <em>Speech Communication</em>, vol. 84, pp. 57–65, Nov. 2015.</li>
+        <li>D. P. Kingma and J. Ba, "Adam: A Method for Stochastic Optimization," in <em>Proc. ICLR</em>, 2015, pp. 1–15.</li>
+        <li>J. Thiemann, N. Ito, and E. Vincent, "The Diverse Environments Multi-channel Acoustic Noise Database (DEMAND)," <em>J. Acoust. Soc. Am</em>, vol. 133, no. 5, pp. 3591–3591, 2013.</li>
+        <li>A. Rix, J. Beerends, M. Hollier, and A. Hekstra, "Perceptual Evaluation of Speech Quality (PESQ)," in <em>Proc. ICASSP</em>, vol. 2, 2001, pp. 749–752.</li>
+        <li>C. Taal, R. Hendriks, R. Heusdens, and J. Jensen, "An algorithm for intelligibility prediction of time–frequency weighted noisy speech," <em>IEEE/ACM TASLP</em>, vol. 19, pp. 2125–2136, 2011.</li>
+        <li>C. K. Reddy, V. Gopal, and R. Cutler, "DNSMOS: A non-intrusive perceptual objective speech quality metric to evaluate noise suppressors," in <em>Proc. ICASSP</em>, 2021, pp. 6493–6497.</li>
+      </ol>
+    </section>
+
+  </main>
+
+  <footer class="site-footer"><p>&copy; 2026 Kenichi Ogita — Nagoya University</p></footer>
+  <script src="./js/script.js"></script>
+</body>
+</html>
